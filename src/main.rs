@@ -15,8 +15,10 @@ use game::Ship;
 
 fn rotate_points(points: &mut[Point], angle: f64) {
     for point in points {
-        point.x = point.x * angle.cos() + point.y * angle.sin();
-        point.y = point.x * angle.cos() - point.y * angle.sin();
+        let x = point.x;
+        let y = point.y;
+        point.x = x * angle.cos() + y * angle.sin();
+        point.y = y * angle.cos() - x * angle.sin();
     }
 }
 
@@ -132,7 +134,7 @@ fn main() -> Result<(), String> {
         position: Point{x: (res_x / 2) as f64, y: (res_y / 2) as f64},
         speed: Point{x: 0.0, y: 0.0},
         accel: Point{x: 0.0, y: 0.0},
-        rotation: PI/4.0,
+        rotation: 0.0,
         rot_speed: 0.0,
         rot_accel: 0.0,
     };
@@ -212,10 +214,7 @@ fn main() -> Result<(), String> {
         ship_update(&mut ship, delta);
         ship_shape = ship_shape_template;
 
-//rotate_points has unexpected results - need to test this
-
-//        rotate_points(&mut ship_shape[..], ship.rotation);
-//        ship.rotation = ship.rotation + PI/16.0;
+        rotate_points(&mut ship_shape[..], ship.rotation);
         move_points(&mut ship_shape[..], ship.position.x, ship.position.y);
 
 //drawing
