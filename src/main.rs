@@ -13,6 +13,15 @@ use game::Ship;
 
 //functions
 
+
+struct Keys {
+    up: bool,
+    down: bool,
+    left: bool,
+    right: bool,
+    space: bool,
+}
+
 fn rotate_points(points: &mut[Point], angle: f64) {
     for point in points {
         let x = point.x;
@@ -39,7 +48,13 @@ fn points_to_SDLpoints(points: &[Point], SDLpoints: &mut[SDLPoint]) {
     } else { println!("uh oh"); }
 }
 
-fn ship_update(ship: &mut Ship, delta: f64, keys: Keys) {
+fn ship_update(ship: &mut Ship, delta: f64, keys: &Keys) {
+    let acceleration = if keys.up { -360.0 } else { 0.0 };
+    let mut point = [Point { x: 0.0, y: acceleration }];
+    rotate_points(&mut point, ship.rotation);
+    ship.accel = point[0];
+
+
     ship.speed.x += ship.accel.x * delta;
     ship.speed.y += ship.accel.y * delta;
     ship.rot_speed += ship.rot_accel * delta;
@@ -58,14 +73,6 @@ fn ship_update(ship: &mut Ship, delta: f64, keys: Keys) {
 fn main() -> Result<(), String> {
 
 //struct for inputs
-
-    struct Keys {
-        up: bool,
-        down: bool,
-        left: bool,
-        right: bool,
-        space: bool,
-    }
 
     let mut keys = Keys {
         up: false,
@@ -140,7 +147,7 @@ fn main() -> Result<(), String> {
 
 //magic numbers for tuning of ship controls
 //    let rot_speed_value: f64 = 30.0;
-//    let rot_accel_value: f64 = 360.0;
+//    let accel_value: f64 = 360.0;
 //    let rot_resist_value: f64 = 0.9;
 
 
@@ -203,14 +210,14 @@ fn main() -> Result<(), String> {
 
 //temporary controls
 
-        if keys.up {ship.accel.y -= 1.0;}
-        if keys.down {ship.accel.y += 1.0;}
-        if keys.left {ship.rot_accel += 1.0;}
-        if keys.right {ship.rot_accel -= 1.0;}
+//        if keys.up {ship.accel.y -= 1.0;}
+//        if keys.down {ship.accel.y += 1.0;}
+//        if keys.left {ship.rot_accel += 1.0;}
+//        if keys.right {ship.rot_accel -= 1.0;}
 
 //ship physics
 
-        ship_update(&mut ship, delta);
+        ship_update(&mut ship, delta, &keys);
         ship_shape = ship_shape_template;
 
         rotate_points(&mut ship_shape[..], ship.rotation);
