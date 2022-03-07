@@ -39,20 +39,19 @@ fn points_to_SDLpoints(points: &[Point], SDLpoints: &mut[SDLPoint]) {
     } else { println!("uh oh"); }
 }
 
-fn ship_update(ship: &mut Ship, delta: f64) {
+fn ship_update(ship: &mut Ship, delta: f64, keys: Keys) {
     ship.speed.x += ship.accel.x * delta;
     ship.speed.y += ship.accel.y * delta;
     ship.rot_speed += ship.rot_accel * delta;
     ship.rotation += ship.rot_speed * delta;
 
     let a: f64 = 0.0;
-    ship.rotation %= ship.rotation * (4.0_f64 * a.acos());
+    ship.rotation %= (4.0_f64 * a.acos());
     ship.rot_speed *= (1.0_f64 - 0.9_f64).powf(delta);
 
     ship.position.x += ship.speed.x * delta;
     ship.position.y += ship.speed.y * delta;
 }
-
 
 
 
@@ -206,8 +205,8 @@ fn main() -> Result<(), String> {
 
         if keys.up {ship.accel.y -= 1.0;}
         if keys.down {ship.accel.y += 1.0;}
-        if keys.left {ship.accel.x -= 1.0;}
-        if keys.right {ship.accel.x += 1.0;}
+        if keys.left {ship.rot_accel += 1.0;}
+        if keys.right {ship.rot_accel -= 1.0;}
 
 //ship physics
 
