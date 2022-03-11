@@ -54,6 +54,10 @@ fn ship_update(ship: &mut Ship, delta: f64, keys: &Keys) {
     rotate_points(&mut point, ship.rotation);
     ship.accel = point[0];
 
+    ship.rot_accel = 0.0;
+    if keys.left { ship.rot_accel += 30.0 };
+    if keys.right { ship.rot_accel -= 30.0 };
+
 
     ship.speed.x += ship.accel.x * delta;
     ship.speed.y += ship.accel.y * delta;
@@ -99,12 +103,15 @@ fn main() -> Result<(), String> {
     let mut canvas = window
         .into_canvas()
         .accelerated()
+        .present_vsync()
         .build()
         .map_err(|e| e.to_string())?;
 
     canvas.set_draw_color(sdl2::pixels::Color::RGBA(0, 0, 0, 255));
     canvas.clear();
     canvas.present();
+
+
 
     let mut event_pump = sdl_context.event_pump()?;
 
@@ -146,7 +153,7 @@ fn main() -> Result<(), String> {
     };
 
 //magic numbers for tuning of ship controls
-//    let rot_speed_value: f64 = 30.0;
+//    let rot_accel_value: f64 = 30.0;
 //    let accel_value: f64 = 360.0;
 //    let rot_resist_value: f64 = 0.9;
 
@@ -230,7 +237,7 @@ fn main() -> Result<(), String> {
         canvas.draw_lines(&SDLship[..]);
         canvas.present();
 
-        std::thread::sleep(Duration::from_millis(10));
+        //std::thread::sleep(Duration::from_millis(10));
     }
 
     Ok(())
